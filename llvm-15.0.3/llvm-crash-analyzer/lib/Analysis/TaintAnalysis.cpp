@@ -1876,9 +1876,23 @@ bool crash_analyzer::TaintAnalysis::runOnBlameMF(
         Result = true;
     }
     // Update TL_Of_Caller to be available in the parent call.
-    if (CalleeNotInBT)
-      mergeTaintList(*TL_Of_Caller, TL_Mbb);
+    // if (CalleeNotInBT)
+    //   mergeTaintList(*TL_Of_Caller, TL_Mbb);
   }
+  if (CalleeNotInBT){
+
+    auto MBBIt_Prev = po_begin(&MF.front());
+    for (auto MBBIt = po_begin(&MF.front()), MBBIt_E = po_end(&MF.front());
+       MBBIt != MBBIt_E; ++MBBIt){
+        MBBIt_Prev = MBBIt;
+       } 
+    auto MBB = *MBBIt_Prev;
+    for (const MachineBasicBlock *Succ : MBB->successors()) {
+        mergeTaintList(*TL_Of_Caller, MBB_TL_Map.find(Succ)->second);
+      }
+  }
+  
+
   resetTaintList(*CurTL);
   setREAnalysis(nullptr);
   setCRE(nullptr);

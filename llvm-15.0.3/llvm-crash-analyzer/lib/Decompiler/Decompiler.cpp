@@ -322,7 +322,7 @@ bool crash_analyzer::Decompiler::DecodeIntrsToMIR(
       // check if this should start a new basic block. For example
       // default:
       // label within a switch usually has this structure.
-      if (!MCID.isBranch() && BranchesToUpdate.count(Addr.Address) &&
+      if (BranchesToUpdate.count(Addr.Address) &&
           !PrevBranch) {
         MachineBasicBlock *OldBB = MBB;
         MBB = MF->CreateMachineBasicBlock();
